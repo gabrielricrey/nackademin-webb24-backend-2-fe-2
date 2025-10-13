@@ -1,5 +1,6 @@
 import CourseForm from "@/components/courses/CourseForm";
 import CourseList from "@/components/courses/CourseList";
+import Link from "next/link";
 
 export default async function Home() {
   const baseUrl = process.env.BACKEND_BASE_URL
@@ -12,7 +13,10 @@ export default async function Home() {
     <div className="p-16">
       <h1 className="text-2xl font-bold">Kurser</h1>
       <CourseList courses={courses.data} />
-      <CourseForm/>
+      <Link href={"/courses/new"}>
+        Skapa ny Kurs
+      </Link>
+      {/* <CourseForm/> */}
     </div>
   );
 }

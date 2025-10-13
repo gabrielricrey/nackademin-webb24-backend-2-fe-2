@@ -38,6 +38,7 @@ export default function CourseList({courses}: CourseListProps) {
               </span>
             )}
           </div>
+          {/* //TODO Add link to courses/[id] */}
         </div>
       ))}
     </div>

@@ -1,10 +1,9 @@
-import CourseForm from "@/components/courses/CourseForm";
 import CourseList from "@/components/courses/CourseList";
 import Link from "next/link";
 
 export default async function Home() {
   const baseUrl = process.env.BACKEND_BASE_URL
-  const url = `${baseUrl}/courses/?limit=100`
+  const url = `${baseUrl}/courses/`
   const response = await fetch(url)
   const courses: PaginatedListResponse<Course>= await response.json()
   console.log(courses)

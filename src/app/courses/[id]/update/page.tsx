@@ -1,10 +1,25 @@
-//TODO set up update course form in external "UpdateCourse.tsx" component to handle the fetched course as a prop and updated data
+import UpdateCourse from "@/components/courses/UpdateCourse";
+import { notFound } from "next/navigation";
 
-export default function UpdateCoursePage() {
-    //TODO Get id from params [id]
-    //TODO fetch the course in question single render 404 if null
-  return (
-    <div className="p-16">
-    </div>
-  );
+export default async function UpdateCoursePage({params}: PageProps<"/courses/[id]/update">) {
+    const { id } = await params
+    try {
+
+      const baseUrl = process.env.BACKEND_BASE_URL
+      const url = `${baseUrl}/courses/${id}/`
+      const response = await fetch(url)
+      
+      if(!response.ok) {
+        throw new Error("Course not found")
+      }
+      const course: Course | null = await response.json()
+      if(!course) {
+        throw new Error("Course not found")
+      }
+      return (
+        <UpdateCourse course={course}/>
+      );
+    } catch(err) {
+      return notFound()
+    } 
 }

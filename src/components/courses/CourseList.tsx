@@ -1,3 +1,4 @@
+import Link from "next/link"
 
 type CourseListProps = {
     courses: Course[]
@@ -38,6 +39,9 @@ export default function CourseList({courses}: CourseListProps) {
               </span>
             )}
           </div>
+          <Link href={`/courses/${course.course_id}/update/`}>
+            Update course
+          </Link>
           {/* //TODO Add link to courses/[id] */}
         </div>
       ))}

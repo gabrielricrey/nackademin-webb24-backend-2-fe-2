@@ -1,11 +1,58 @@
+"use client"
+
+import Link from "next/link"
+import { useState, useEffect } from "react"
+import LocalizedDate from "./LocalizedDate"
 
 type CourseListProps = {
-    courses: Course[]
+  initialData: PaginatedListResponse<Course>,
+  url: string,
 }
 
-export default function CourseList({courses}: CourseListProps) {
-    return (
+export default function CourseList({ initialData, url }: CourseListProps) {
+  const [count, setCount] = useState<number>(initialData.count);
+  const [limit, setLimit] = useState<number>(initialData.limit);
+  const [courses, setCourses] = useState(initialData.data);
+  const [page, setPage] = useState<number>(1);
+
+  const maxPage = Math.ceil(count / limit);
+
+  useEffect(() => {
+
+    const fetchCourses = async () => {
+      try {
+        const response = await fetch(`${url}?offset=${(page - 1) * 10}`);
+        const data: PaginatedListResponse<Course> = await response.json();
+        setCourses(data.data);
+        setCount(data.count);
+        setLimit(data.limit);
+      } catch (error) {
+        console.error("Failed to fetch courses:", error);
+      }
+    }
+
+    fetchCourses();
+  }, [page])
+
+  return (
     <div className="grid gap-4">
+      <div className="flex">
+        <div className="flex">
+          <button onClick={() => setPage(prev => (prev > 1 ? prev - 1 : prev))} disabled={page === 1}>-</button>
+          <div className="border-1 p-1">
+            <span>Page:</span>
+            <input type="text" value={page} readOnly />
+          </div>
+          <button onClick={() => setPage(prev => (prev < maxPage ? prev + 1 : prev))}>+</button>
+        </div>
+        <div>
+          <label htmlFor="sort">Sort by:</label>
+          <select id="sort">
+            <option></option>
+            <option></option>
+          </select>
+        </div>
+      </div>
       {courses.map((course) => (
         <div
           key={course.course_id}
@@ -31,14 +78,26 @@ export default function CourseList({courses}: CourseListProps) {
             )}
             {course.start_date && (
               <span>
-                {new Date(course.start_date).toLocaleDateString()} →{" "}
+                <LocalizedDate date={course.start_date} /> →{" "}
                 {course.end_date
-                  ? new Date(course.end_date).toLocaleDateString()
+                  ? <LocalizedDate date={course.end_date} />
                   : "TBD"}
               </span>
             )}
           </div>
-          {/* //TODO Add link to courses/[id] */}
+          <Link
+            href={`/courses/${course.course_id}`}
+            className="inline-block mt-3 text-blue-600 hover:text-blue-800 font-medium text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400 rounded-md border-1 px-2 py-1"
+          >
+            View details
+          </Link>
+
+          <Link
+            href={`/courses/${course.course_id}/update`}
+            className="inline-block mt-3 ml-4 text-gray-700 hover:text-gray-900 font-medium text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400 rounded-md border-1 px-2 py-1"
+          >
+            Update course
+          </Link>
         </div>
       ))}
     </div>

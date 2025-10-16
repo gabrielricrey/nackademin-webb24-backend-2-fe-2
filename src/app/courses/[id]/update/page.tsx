@@ -24,5 +24,6 @@ export default async function UpdateCoursePage({ params }: UpdateCoursePageProps
 
   return (
     <UpdateCourse course={course} />
-  );
+  )
 }
+;
